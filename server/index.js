@@ -4,11 +4,38 @@ import dotevn from "dotenv";
 
 dotevn.config();
 
+import Mytodos from "./model/Mytodos.js";
+
 const app = express();
 app.use(express.json());
 
 app.get("/healths", async (req, res) => {
   res.send("Health is ok");
+});
+
+app.post("/api/v1/todos", async (req, res) => {
+  const {title, description, state } = req.body;
+
+  const todos = new Mytodos({
+    title,
+    description,
+    state,
+  })
+
+  try {
+    const savetodoData = await Mytodos.save();
+    res.json({
+      success: true,
+      data: savetodoData,
+      message: err,
+    })
+
+  } catch (err) {
+    res.json({
+      success: false,
+      message: err,
+    });
+  }
 });
 
 const connectDB = () => {
@@ -17,7 +44,7 @@ const connectDB = () => {
   if (conn) {
     console.log("MongoDb Connected Successfully.");
   }
-};                                                                                                                             
+};
 
 connectDB();
 
